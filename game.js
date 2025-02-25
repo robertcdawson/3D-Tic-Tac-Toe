@@ -91,8 +91,11 @@ class OrbitControls {
 
           const element = this.domElement;
           const radFactor = (2 * Math.PI) / element.clientHeight;
-          this.rotateLeft(this.rotateDelta.x * radFactor * 0.5); // Reduced sensitivity for touch
-          this.rotateUp(this.rotateDelta.y * radFactor * 0.5);
+
+          // Increase touch sensitivity for better mobile interaction
+          const touchSensitivity = 0.8; // Increased from 0.5
+          this.rotateLeft(this.rotateDelta.x * radFactor * touchSensitivity);
+          this.rotateUp(this.rotateDelta.y * radFactor * touchSensitivity);
 
           this.rotateStart.copy(this.rotateEnd);
         }
@@ -103,8 +106,11 @@ class OrbitControls {
           const dy = event.touches[0].pageY - event.touches[1].pageY;
           this.touchZoomDistanceEnd = Math.sqrt(dx * dx + dy * dy);
 
-          // Calculate zoom factor
-          const factor = this.touchZoomDistanceStart / this.touchZoomDistanceEnd;
+          // Increase zoom sensitivity for better mobile interaction
+          const zoomSensitivity = 1.2; // Increased sensitivity
+
+          // Calculate zoom factor with enhanced sensitivity
+          const factor = Math.pow(this.touchZoomDistanceStart / this.touchZoomDistanceEnd, zoomSensitivity);
 
           // Apply zoom
           const offset = new THREE.Vector3().subVectors(this.camera.position, this.target);
@@ -304,7 +310,15 @@ function initGame() {
   scene.background = new THREE.Color(0x333333);
 
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.copy(initialCameraPosition);
+
+  // Set initial camera position based on device
+  if (window.innerWidth <= 480) {
+    // For mobile, position camera slightly higher
+    camera.position.set(5, 6.5, 5);
+  } else {
+    camera.position.copy(initialCameraPosition);
+  }
+
   camera.lookAt(0, 0, 0);
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -323,6 +337,9 @@ function initGame() {
   scene.add(directionalLight);
 
   createGameBoard();
+
+  // Adjust cube position for mobile devices
+  adjustCubePositionForMobile();
 
   // Initialize sound effects
   placeMarkSound = document.getElementById('placeMarkSound');
@@ -367,12 +384,35 @@ function initGame() {
   window.addEventListener('resize', onWindowResize);
   renderer.domElement.addEventListener('click', onCubeClick);
 
+  // Add touch-specific event for better mobile interaction
+  renderer.domElement.addEventListener('touchend', onCubeTouchEnd);
+
   // Add mousemove event for hover effects
   renderer.domElement.addEventListener('mousemove', onCubeHover);
 
   // Hook up the two reset buttons
   document.getElementById('resetButton').addEventListener('click', resetGame);
   document.getElementById('resetZoomButton').addEventListener('click', resetZoom);
+
+  // Add event listener for instructions toggle
+  const toggleButton = document.getElementById('toggleInstructions');
+  const instructionsPanel = document.getElementById('gameInstructions');
+
+  toggleButton.addEventListener('click', () => {
+    instructionsPanel.classList.toggle('collapsed');
+    // Save preference to localStorage
+    localStorage.setItem('instructionsCollapsed', instructionsPanel.classList.contains('collapsed'));
+  });
+
+  // Check if instructions were previously collapsed
+  if (localStorage.getItem('instructionsCollapsed') === 'true') {
+    instructionsPanel.classList.add('collapsed');
+  }
+
+  // Auto-collapse instructions on small screens
+  if (window.innerWidth <= 480) {
+    instructionsPanel.classList.add('collapsed');
+  }
 
   animate();
 }
@@ -416,6 +456,15 @@ function createGameBoard() {
 
 function resetZoom() {
   camera.position.copy(initialCameraPosition);
+
+  // Ensure we maintain the mobile adjustment if on mobile
+  if (window.innerWidth <= 480) {
+    // Keep the target adjusted for mobile
+    controls.target.set(0, 2.5, 0); // Updated to 2.5 to match adjustCubePositionForMobile
+  } else {
+    controls.target.set(0, 0, 0);
+  }
+
   camera.lookAt(controls.target);
 }
 
@@ -863,12 +912,42 @@ function resetGame() {
 
   // Also reset zoom to the default view.
   resetZoom();
+
+  // Ensure the cube position is adjusted for mobile
+  adjustCubePositionForMobile();
 }
 
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+
+  // Auto-collapse instructions on small screens when resizing
+  const instructionsPanel = document.getElementById('gameInstructions');
+  if (window.innerWidth <= 480 && !instructionsPanel.classList.contains('collapsed')) {
+    instructionsPanel.classList.add('collapsed');
+  }
+
+  // Adjust cube position on mobile
+  adjustCubePositionForMobile();
+}
+
+// Function to adjust cube position for mobile devices
+function adjustCubePositionForMobile() {
+  // Get all objects in the scene
+  const isMobile = window.innerWidth <= 480;
+
+  // Adjust the scene position based on device size
+  if (isMobile) {
+    // Move the scene up on mobile by adjusting the camera target
+    controls.target.set(0, 2.5, 0); // Increased from 1.5 to 2.5 units for more noticeable shift
+  } else {
+    // Reset to center on desktop
+    controls.target.set(0, 0, 0);
+  }
+
+  // Update camera to look at the new target
+  camera.lookAt(controls.target);
 }
 
 function animate() {
@@ -899,6 +978,15 @@ function setCameraPreset(preset) {
   const position = cameraPresets[preset];
   if (position) {
     camera.position.copy(position);
+
+    // Ensure we maintain the mobile adjustment if on mobile
+    if (window.innerWidth <= 480) {
+      // Keep the target adjusted for mobile
+      controls.target.set(0, 1.5, 0); // Update to 1.5 to match other functions
+    } else {
+      controls.target.set(0, 0, 0);
+    }
+
     camera.lookAt(controls.target);
   }
 }
@@ -966,4 +1054,75 @@ function logGameState() {
   console.log(`Scores: X:${scores.X}, O:${scores.O}`);
   console.log(`Line Completed This Turn: ${lineCompletedThisTurn}`);
   console.log("==================");
+}
+
+// Add a touch-specific handler for cube selection
+function onCubeTouchEnd(event) {
+  if (!gameActive || event.touches.length > 0) {
+    return;
+  }
+
+  // Prevent default to avoid double-firing with click events
+  event.preventDefault();
+
+  // Get the last touch position
+  const touch = event.changedTouches[0];
+
+  // Calculate touch position relative to the renderer's DOM element
+  const rect = renderer.domElement.getBoundingClientRect();
+  const mouse = new THREE.Vector2(
+    ((touch.clientX - rect.left) / rect.width) * 2 - 1,
+    -((touch.clientY - rect.top) / rect.height) * 2 + 1
+  );
+
+  const raycaster = new THREE.Raycaster();
+  raycaster.setFromCamera(mouse, camera);
+
+  // Get all intersections
+  const intersects = raycaster.intersectObjects(cubes);
+
+  // Only select the first cube hit by the ray, whether marked or not
+  if (intersects.length > 0) {
+    const selectedCube = intersects[0].object;
+    const { x, y, z, marked } = selectedCube.userData;
+
+    // Only proceed if the cube is not already marked
+    if (!marked) {
+      // Reset the line completed flag for this turn
+      lineCompletedThisTurn = false;
+
+      markCube(selectedCube, x, y, z, currentPlayer);
+
+      // Increment total marks
+      totalMarks++;
+
+      // Update the remaining cells display
+      document.getElementById('remaining').innerText = `Cells remaining: ${27 - totalMarks}`;
+
+      // Check for completed lines
+      checkLines();
+
+      // Log game state after checking lines
+      logGameState();
+
+      // Check if all cells are filled
+      if (totalMarks === 27) {
+        endGame();
+        return;
+      }
+
+      // Play sound based on game state
+      if (soundEnabled) {
+        if (lineCompletedThisTurn) {
+          playSound(completeLineSound, "completeLineSound");
+        } else {
+          playSound(placeMarkSound, "placeMarkSound");
+        }
+      }
+
+      // Switch players
+      currentPlayer = (currentPlayer === 'X') ? 'O' : 'X';
+      document.getElementById('turn').innerText = `Current turn: ${currentPlayer}`;
+    }
+  }
 }

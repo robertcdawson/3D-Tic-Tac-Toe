@@ -42,33 +42,40 @@
     </div>
 
     <div id="gameInstructions">
-      <h2>How to Play</h2>
-      <div class="instruction-item">
-        <span class="instruction-icon">🔄</span>
-        <span class="instruction-text">Drag to rotate the cube</span>
+      <div class="instructions-header">
+        <h2>How to Play</h2>
+        <button id="toggleInstructions" aria-label="Toggle instructions visibility">
+          <span class="toggle-icon">▼</span>
+        </button>
       </div>
-      <div class="instruction-item">
-        <span class="instruction-icon">🔍</span>
-        <span class="instruction-text">Scroll to zoom in/out</span>
-      </div>
-      <div class="instruction-item">
-        <span class="instruction-icon">👆</span>
-        <span class="instruction-text">Click on a cube to place your mark</span>
-      </div>
-      <div class="instruction-item">
-        <span class="instruction-icon">⌨️</span>
-        <span class="instruction-text">Arrow keys to rotate</span>
-      </div>
-      <div class="instruction-item">
-        <span class="instruction-icon">⇧</span>
-        <span class="instruction-text">Shift+Up/Down to zoom</span>
-      </div>
-      <div class="instruction-item">
-        <span class="instruction-icon">ℹ️</span>
-        <span class="instruction-text">You can click edges of interior cells from certain angles</span>
-      </div>
-      <div class="reset-zoom">
-        <button id="resetZoomButton">Reset Zoom</button>
+      <div id="instructionsContent">
+        <div class="instruction-item">
+          <span class="instruction-icon">🔄</span>
+          <span class="instruction-text">Drag to rotate the cube</span>
+        </div>
+        <div class="instruction-item">
+          <span class="instruction-icon">🔍</span>
+          <span class="instruction-text">Scroll to zoom in/out</span>
+        </div>
+        <div class="instruction-item">
+          <span class="instruction-icon">👆</span>
+          <span class="instruction-text">Click on a cube to place your mark</span>
+        </div>
+        <div class="instruction-item">
+          <span class="instruction-icon">⌨️</span>
+          <span class="instruction-text">Arrow keys to rotate</span>
+        </div>
+        <div class="instruction-item">
+          <span class="instruction-icon">⇧</span>
+          <span class="instruction-text">Shift+Up/Down to zoom</span>
+        </div>
+        <div class="instruction-item">
+          <span class="instruction-icon">ℹ️</span>
+          <span class="instruction-text">You can click edges of interior cells from certain angles</span>
+        </div>
+        <div class="reset-zoom">
+          <button id="resetZoomButton">Reset Zoom</button>
+        </div>
       </div>
     </div>
 
