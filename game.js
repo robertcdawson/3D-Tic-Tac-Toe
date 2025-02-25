@@ -313,8 +313,8 @@ function initGame() {
 
   // Set initial camera position based on device
   if (window.innerWidth <= 480) {
-    // For mobile, position camera slightly higher
-    camera.position.set(5, 6.5, 5);
+    // For mobile, position camera significantly higher
+    camera.position.set(5, 8, 5); // Increased from 6.5 to 8 for a more noticeable shift upward
   } else {
     camera.position.copy(initialCameraPosition);
   }
@@ -455,17 +455,17 @@ function createGameBoard() {
 }
 
 function resetZoom() {
-  camera.position.copy(initialCameraPosition);
+  const isMobile = window.innerWidth <= 480;
 
-  // Ensure we maintain the mobile adjustment if on mobile
-  if (window.innerWidth <= 480) {
-    // Keep the target adjusted for mobile
-    controls.target.set(0, 2.5, 0); // Updated to 2.5 to match adjustCubePositionForMobile
+  if (isMobile) {
+    camera.position.set(5, 8, 5);
+    controls.target.set(0, 3.5, 0); // Updated to 3.5 to match adjustCubePositionForMobile
   } else {
+    camera.position.copy(initialCameraPosition);
     controls.target.set(0, 0, 0);
   }
 
-  camera.lookAt(controls.target);
+  controls.update();
 }
 
 // Define helper function to stop all sounds
@@ -940,7 +940,7 @@ function adjustCubePositionForMobile() {
   // Adjust the scene position based on device size
   if (isMobile) {
     // Move the scene up on mobile by adjusting the camera target
-    controls.target.set(0, 2.5, 0); // Increased from 1.5 to 2.5 units for more noticeable shift
+    controls.target.set(0, 3.5, 0); // Increased from 2.5 to 3.5 units for more significant shift
   } else {
     // Reset to center on desktop
     controls.target.set(0, 0, 0);
@@ -975,20 +975,36 @@ function animate() {
 
 // Function to set camera to a preset position
 function setCameraPreset(preset) {
-  const position = cameraPresets[preset];
-  if (position) {
-    camera.position.copy(position);
+  const isMobile = window.innerWidth <= 480;
 
-    // Ensure we maintain the mobile adjustment if on mobile
-    if (window.innerWidth <= 480) {
-      // Keep the target adjusted for mobile
-      controls.target.set(0, 1.5, 0); // Update to 1.5 to match other functions
-    } else {
-      controls.target.set(0, 0, 0);
-    }
-
-    camera.lookAt(controls.target);
+  switch (preset) {
+    case 'front':
+      camera.position.set(0, 0, 5);
+      break;
+    case 'back':
+      camera.position.set(0, 0, -5);
+      break;
+    case 'left':
+      camera.position.set(-5, 0, 0);
+      break;
+    case 'right':
+      camera.position.set(5, 0, 0);
+      break;
+    case 'top':
+      camera.position.set(0, 5, 0);
+      break;
+    case 'bottom':
+      camera.position.set(0, -5, 0);
+      break;
   }
+
+  if (isMobile) {
+    controls.target.set(0, 3.5, 0); // Updated to 3.5 to match adjustCubePositionForMobile
+  } else {
+    controls.target.set(0, 0, 0);
+  }
+
+  controls.update();
 }
 
 // Function to handle cube hover effects

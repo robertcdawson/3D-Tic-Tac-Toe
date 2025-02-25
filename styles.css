@@ -38,6 +38,7 @@ body {
 #cameraPresets {
   display: flex;
   gap: 10px;
+  align-items: center;
 }
 
 #cameraPresets button {
@@ -323,19 +324,32 @@ body {
     padding: 10px;
   }
 
+  #gameHeader h1 {
+    margin-bottom: 5px;
+  }
+
   #cameraPresets {
     width: 100%;
     justify-content: center;
+    display: flex;
+    align-items: center;
+  }
+
+  #cameraPresets::before {
+    content: "Views:";
+    margin-right: 10px;
+    color: #4ecca3;
+    font-weight: bold;
   }
 
   #gameContainer {
-    padding-top: 40px;
+    padding-top: 120px;
   }
 
   #gameStats {
-    top: auto;
-    bottom: 10px;
+    top: 80px;
     right: 10px;
+    bottom: auto;
     max-width: 150px;
     font-size: 14px;
     padding: 8px 12px;
@@ -400,6 +414,9 @@ body {
 /* Ensure no overlap on very small screens */
 @media (max-width: 360px) {
   #gameStats {
+    top: 80px;
+    right: 10px;
+    bottom: auto;
     max-width: 120px;
     padding: 6px 10px;
   }
