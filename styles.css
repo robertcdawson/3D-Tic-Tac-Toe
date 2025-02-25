@@ -1,85 +1,167 @@
+/* Base styles */
 body {
   margin: 0;
   overflow: hidden;
-  font-family: Arial, sans-serif;
-  background: #333;
+  font-family: 'Roboto', sans-serif;
+  background: #1a1a2e;
+  color: #e6e6e6;
 }
 
 #gameContainer {
   position: relative;
   width: 100%;
   height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr;
 }
 
-#score {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 16px;
-  z-index: 10;
-}
-
-#turn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 16px;
-  z-index: 10;
-}
-
-#instructions {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 14px;
-  max-width: 300px;
-  z-index: 10;
-}
-
-#cameraPresets {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 14px;
-  z-index: 10;
+/* Header styles */
+#gameHeader {
+  background: rgba(16, 16, 36, 0.8);
+  padding: 10px 20px;
   display: flex;
-  gap: 5px;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+}
+
+#gameHeader h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 28px;
+  margin: 0;
+  color: #4ecca3;
+  text-shadow: 0 0 10px rgba(78, 204, 163, 0.5);
+}
+
+/* Camera presets */
+#cameraPresets {
+  display: flex;
+  gap: 10px;
 }
 
 #cameraPresets button {
-  padding: 5px 10px;
+  background: #232350;
+  border: 1px solid #4ecca3;
+  color: #e6e6e6;
+  padding: 8px 15px;
+  border-radius: 4px;
   font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+#cameraPresets button:hover {
+  background: #2d2d6b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Game stats panel */
+#gameStats {
+  position: absolute;
+  top: 80px;
+  right: 20px;
+  background: rgba(16, 16, 36, 0.8);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 10;
+  border-left: 3px solid #4ecca3;
+}
+
+#score, #turn, #remaining {
+  font-size: 16px;
+  padding: 5px 0;
+}
+
+#turn {
+  font-weight: bold;
+  color: #4ecca3;
 }
 
 #soundToggle {
-  position: absolute;
-  top: 60px;
-  right: 10px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 14px;
-  z-index: 10;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
 }
 
+#soundToggle label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+#soundToggle input {
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+/* Instructions panel */
+#gameInstructions {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(16, 16, 36, 0.8);
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  max-width: 350px;
+  z-index: 10;
+  border-left: 3px solid #4ecca3;
+}
+
+#gameInstructions h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 20px;
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #4ecca3;
+}
+
+.instruction-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.instruction-icon {
+  font-size: 18px;
+  margin-right: 12px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.instruction-text {
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.reset-zoom {
+  margin-top: 15px;
+  text-align: center;
+}
+
+#resetZoomButton {
+  background: #232350;
+  border: 1px solid #4ecca3;
+  color: #e6e6e6;
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+#resetZoomButton:hover {
+  background: #2d2d6b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Game over modal */
 .hidden {
   display: none;
 }
@@ -89,20 +171,30 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(16, 16, 36, 0.95);
   color: white;
-  padding: 20px;
+  padding: 30px;
   border-radius: 10px;
   text-align: center;
   font-size: 24px;
   z-index: 999;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 2px solid #4ecca3;
+  min-width: 300px;
 }
 
-button {
-  background: #4CAF50;
+#winner {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #4ecca3;
+}
+
+#resetButton {
+  background: #4ecca3;
   border: none;
-  color: white;
-  padding: 10px 20px;
+  color: #1a1a2e;
+  padding: 12px 25px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -110,10 +202,14 @@ button {
   margin: 10px 2px;
   cursor: pointer;
   border-radius: 5px;
+  font-weight: bold;
+  transition: all 0.2s ease;
 }
 
-button:hover {
-  background: #45a049;
+#resetButton:hover {
+  background: #3db893;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Animation for the pulse effect */
@@ -144,14 +240,57 @@ button:hover {
   filter: brightness(1.2);
 }
 
-#remaining {
-  position: absolute;
-  top: 60px;
-  left: 10px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 16px;
-  z-index: 10;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #gameHeader h1 {
+    font-size: 22px;
+  }
+
+  #gameStats {
+    top: 70px;
+    right: 10px;
+    padding: 10px;
+  }
+
+  #gameInstructions {
+    bottom: 10px;
+    left: 10px;
+    max-width: 300px;
+    padding: 10px 15px;
+  }
+
+  .instruction-icon {
+    font-size: 16px;
+    margin-right: 8px;
+  }
+
+  .instruction-text {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  #gameHeader {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  #cameraPresets {
+    width: 100%;
+    justify-content: center;
+  }
+
+  #gameStats {
+    top: auto;
+    bottom: 10px;
+    right: 10px;
+    max-width: 120px;
+  }
+
+  #gameInstructions {
+    bottom: 10px;
+    left: 10px;
+    max-width: 200px;
+  }
 }

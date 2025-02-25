@@ -495,10 +495,13 @@ function onCubeClick(event) {
     return;
   }
 
+  // Calculate mouse position relative to the renderer's DOM element
+  const rect = renderer.domElement.getBoundingClientRect();
   const mouse = new THREE.Vector2(
-    (event.clientX / window.innerWidth) * 2 - 1,
-    -(event.clientY / window.innerHeight) * 2 + 1
+    ((event.clientX - rect.left) / rect.width) * 2 - 1,
+    -((event.clientY - rect.top) / rect.height) * 2 + 1
   );
+
   const raycaster = new THREE.Raycaster();
   raycaster.setFromCamera(mouse, camera);
 
@@ -773,13 +776,13 @@ function endGame() {
 
   // Determine the winner based on the final scores
   if (scores.X > scores.O) {
-    winnerText.innerText = `Player X wins!\nX: ${scores.X} O: ${scores.O}`;
+    winnerText.innerText = `Player X wins!\nX: ${scores.X} - O: ${scores.O}`;
     console.log(`Player X wins with score ${scores.X} vs ${scores.O}`);
   } else if (scores.O > scores.X) {
-    winnerText.innerText = `Player O wins!\nO: ${scores.O} X: ${scores.X}`;
+    winnerText.innerText = `Player O wins!\nO: ${scores.O} - X: ${scores.X}`;
     console.log(`Player O wins with score ${scores.O} vs ${scores.X}`);
   } else {
-    winnerText.innerText = `Game ended in a tie!\nX: ${scores.X} O: ${scores.O}`;
+    winnerText.innerText = `Game ended in a tie!\nX: ${scores.X} - O: ${scores.O}`;
     console.log(`Game ended in a tie with scores ${scores.X} vs ${scores.O}`);
   }
 
@@ -824,19 +827,38 @@ function resetGame() {
   highlightedLines.forEach(line => scene.remove(line));
   highlightedLines = [];
 
+  // Properly remove all X and O marks from the scene
+  // First, create a new array to store objects we want to keep
   const keepChildren = [];
+
+  // Iterate through all scene children
   for (let i = 0; i < scene.children.length; i++) {
     const child = scene.children[i];
-    if (
-      child.isMesh &&
-      child.geometry &&
-      (child.geometry.type === 'TorusGeometry' || child.geometry.type === 'CylinderGeometry')
-    ) {
-      // remove these mark meshes
-    } else {
-      keepChildren.push(child);
+
+    // Check if this is an X mark (Group with CylinderGeometry children)
+    if (child.type === 'Group' && child.children &&
+      child.children.length > 0 &&
+      child.children[0].geometry &&
+      child.children[0].geometry.type === 'CylinderGeometry') {
+      // This is an X mark, don't add it to keepChildren
+      console.log("Removing X mark from scene");
+      continue;
     }
+
+    // Check if this is an O mark (Mesh with TorusGeometry)
+    if (child.isMesh &&
+      child.geometry &&
+      child.geometry.type === 'TorusGeometry') {
+      // This is an O mark, don't add it to keepChildren
+      console.log("Removing O mark from scene");
+      continue;
+    }
+
+    // If it's not an X or O mark, keep it
+    keepChildren.push(child);
   }
+
+  // Replace scene children with only the objects we want to keep
   scene.children = keepChildren;
 
   // Also reset zoom to the default view.
@@ -885,10 +907,13 @@ function setCameraPreset(preset) {
 function onCubeHover(event) {
   if (!gameActive) return;
 
+  // Calculate mouse position relative to the renderer's DOM element
+  const rect = renderer.domElement.getBoundingClientRect();
   const mouse = new THREE.Vector2(
-    (event.clientX / window.innerWidth) * 2 - 1,
-    -(event.clientY / window.innerHeight) * 2 + 1
+    ((event.clientX - rect.left) / rect.width) * 2 - 1,
+    -((event.clientY - rect.top) / rect.height) * 2 + 1
   );
+
   const raycaster = new THREE.Raycaster();
   raycaster.setFromCamera(mouse, camera);
 

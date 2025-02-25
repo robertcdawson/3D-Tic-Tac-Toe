@@ -47,10 +47,8 @@ cd 3d-tic-tac-toe
 
 ## Technologies Used
 
-- Frontend: React.js with Three.js for 3D rendering
-- State Management: Redux
-- Styling: CSS Modules / Styled Components
-- Testing: Jest and React Testing Library
+- Frontend: HTML, CSS, and plain-ol' vanilla JavaScript
+- 3D Rendering: Three.js
 
 ## Contributing
 
