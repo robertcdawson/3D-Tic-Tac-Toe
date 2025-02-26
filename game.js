@@ -310,7 +310,6 @@ document.addEventListener('DOMContentLoaded', initGame);
 
 function initGame() {
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x333333);
 
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
@@ -324,7 +323,10 @@ function initGame() {
 
   camera.lookAt(0, 0, 0);
 
-  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    alpha: true // Make the renderer background transparent
+  });
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.getElementById('gameContainer').appendChild(renderer.domElement);
 
@@ -338,6 +340,11 @@ function initGame() {
   const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
   directionalLight.position.set(10, 20, 15);
   scene.add(directionalLight);
+
+  // Add a subtle point light at the center for glow effect
+  const centerLight = new THREE.PointLight(0x6688ff, 0.5, 10);
+  centerLight.position.set(0, 0, 0);
+  scene.add(centerLight);
 
   createGameBoard();
 
@@ -432,7 +439,9 @@ function createGameBoard() {
           color: 0xffffff,
           opacity: CUBE_DEFAULT_OPACITY,
           transparent: true,
-          side: THREE.DoubleSide
+          side: THREE.DoubleSide,
+          emissive: 0x222244, // Add subtle emissive glow
+          emissiveIntensity: 0.2 // Low intensity for subtle effect
         });
         const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
         cube.position.set(
@@ -450,11 +459,25 @@ function createGameBoard() {
   const wireSize = 3.6;
   const wireframeGeometry = new THREE.BoxGeometry(wireSize, wireSize, wireSize);
   const wireframeMaterial = new THREE.MeshBasicMaterial({
-    color: 0x888888,
-    wireframe: true
+    color: 0x4466aa,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.6
   });
   const wireframe = new THREE.Mesh(wireframeGeometry, wireframeMaterial);
   scene.add(wireframe);
+
+  // Add a subtle outer glow wireframe
+  const outerWireSize = 3.8;
+  const outerWireGeometry = new THREE.BoxGeometry(outerWireSize, outerWireSize, outerWireSize);
+  const outerWireMaterial = new THREE.MeshBasicMaterial({
+    color: 0x6688ff,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.2
+  });
+  const outerWireframe = new THREE.Mesh(outerWireGeometry, outerWireMaterial);
+  scene.add(outerWireframe);
 }
 
 function resetZoom() {
@@ -766,8 +789,27 @@ function checkLines() {
     { x: 0, y: 0, z: 2 }
   ])) newLinesCompleted = true;
 
-  // Update the score display
-  document.getElementById('score').innerText = `X: ${scores.X} | O: ${scores.O}`;
+  // Update the score display with animation
+  const scoreXElement = document.getElementById('score-x');
+  const scoreOElement = document.getElementById('score-o');
+
+  scoreXElement.innerText = `X: ${scores.X}`;
+  scoreOElement.innerText = `O: ${scores.O}`;
+
+  // Add animation class if scores changed
+  if (scores.X > previousScores.X) {
+    scoreXElement.classList.remove('score-changed');
+    // Force a reflow to restart the animation
+    void scoreXElement.offsetWidth;
+    scoreXElement.classList.add('score-changed');
+  }
+
+  if (scores.O > previousScores.O) {
+    scoreOElement.classList.remove('score-changed');
+    // Force a reflow to restart the animation
+    void scoreOElement.offsetWidth;
+    scoreOElement.classList.add('score-changed');
+  }
 
   // Check if any NEW lines were completed this turn by comparing with previous scores
   const newXLines = scores.X - previousScores.X;
@@ -832,7 +874,7 @@ function endGame() {
     winnerText.innerText = `Player X wins!\nX: ${scores.X} - O: ${scores.O}`;
     console.log(`Player X wins with score ${scores.X} vs ${scores.O}`);
   } else if (scores.O > scores.X) {
-    winnerText.innerText = `Player O wins!\nO: ${scores.O} - X: ${scores.X}`;
+    winnerText.innerText = `Player O wins!\nX: ${scores.X} - O: ${scores.O}`;
     console.log(`Player O wins with score ${scores.O} vs ${scores.X}`);
   } else {
     winnerText.innerText = `Game ended in a tie!\nX: ${scores.X} - O: ${scores.O}`;
@@ -853,23 +895,26 @@ function resetGame() {
   console.log("Resetting game, stopping all sounds");
   stopAllSounds();
 
+  // Reset game state
   currentPlayer = 'X';
   board = Array(3).fill().map(() => Array(3).fill().map(() => Array(3).fill(null)));
   scores = { 'X': 0, 'O': 0 };
   gameActive = true;
   totalMarks = 0;
+  lineCompletedThisTurn = false;
   lastPlacedMark = null;
   hoveredCube = null;
 
-  // Explicitly reset the line completed flag
-  lineCompletedThisTurn = false;
-  console.log("Reset lineCompletedThisTurn flag to false");
-
-  document.getElementById('score').innerText = 'X: 0 | O: 0';
+  // Update UI
+  document.getElementById('score-x').innerText = 'X: 0';
+  document.getElementById('score-o').innerText = 'O: 0';
   document.getElementById('turn').innerText = 'Current turn: X';
   document.getElementById('remaining').innerText = 'Cells remaining: 27';
+
+  // Hide game over modal
   document.getElementById('gameOver').classList.add('hidden');
 
+  // Reset cube appearance
   cubes.forEach(cube => {
     cube.userData.marked = false;
     cube.userData.player = null;
@@ -877,6 +922,7 @@ function resetGame() {
     cube.material.opacity = CUBE_DEFAULT_OPACITY;
   });
 
+  // Remove any highlighted lines
   highlightedLines.forEach(line => scene.remove(line));
   highlightedLines = [];
 
@@ -951,9 +997,37 @@ function adjustCubePositionForMobile() {
 function animate() {
   requestAnimationFrame(animate);
 
+  // Create a subtle floating effect for the entire game board
+  const time = Date.now() * 0.001; // Convert to seconds
+
+  // Apply gentle floating motion to all cubes
+  cubes.forEach(cube => {
+    // Only apply floating effect if the game is active
+    if (gameActive) {
+      // Calculate a subtle vertical float based on time
+      const floatY = Math.sin(time * 0.3) * 0.015; // Reduced amplitude and frequency
+
+      // Add a very slight rotation for a more "space-like" floating effect
+      const floatRotX = Math.sin(time * 0.2) * 0.001; // Reduced from 0.002
+      const floatRotZ = Math.cos(time * 0.25) * 0.001; // Reduced from 0.002
+
+      // Get the original position based on the cube's coordinates
+      const spacing = 1.2;
+      const x = (cube.userData.x - 1) * spacing;
+      const y = (cube.userData.y - 1) * spacing;
+      const z = (cube.userData.z - 1) * spacing;
+
+      // Apply the floating effect
+      cube.position.y = y + floatY;
+
+      // Apply subtle rotation to the entire scene for a space-like floating effect
+      scene.rotation.x = floatRotX;
+      scene.rotation.z = floatRotZ;
+    }
+  });
+
   // Apply pulse animation to the last placed mark
   if (lastPlacedMark && gameActive) {
-    const time = Date.now() * 0.001; // Convert to seconds
     const scale = 1 + 0.1 * Math.sin(time * 3); // Oscillate between 0.9 and 1.1
 
     if (lastPlacedMark.children && lastPlacedMark.children.length > 0) {

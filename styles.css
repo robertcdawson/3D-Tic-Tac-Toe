@@ -3,8 +3,68 @@ body {
   margin: 0;
   overflow: hidden;
   font-family: 'Roboto', sans-serif;
-  background: #1a1a2e;
+  background: linear-gradient(135deg,
+      #0c0921 0%,
+      #292552 50%,
+      #24243e 100%);
+  background-size: 400% 400%;
+  background-attachment: fixed;
   color: #e6e6e6;
+  animation: gradientShift 30s ease infinite;
+  position: relative;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Static stars in the background */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(1px 1px at 25% 15%, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(1px 1px at 50% 50%, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(2px 2px at 75% 25%, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(2px 2px at 20% 60%, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1px 1px at 40% 80%, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(1px 1px at 90% 35%, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(2px 2px at 5% 70%, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(1px 1px at 60% 95%, rgba(255, 255, 255, 0.8), transparent);
+  background-size: 200% 200%;
+  pointer-events: none;
+  z-index: -2;
+  animation: twinkling 20s ease-in-out infinite alternate;
+}
+
+@keyframes twinkling {
+  0% {
+    background-position: 0% 0%;
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 0.9;
+  }
+
+  100% {
+    background-position: 100% 100%;
+    opacity: 0.7;
+  }
 }
 
 #gameContainer {
@@ -13,6 +73,44 @@ body {
   height: 100vh;
   display: grid;
   grid-template-rows: auto 1fr;
+  background: radial-gradient(circle at center,
+      rgba(100, 100, 255, 0.03) 0%,
+      rgba(0, 0, 0, 0) 70%);
+  /* Add subtle floating effect */
+  animation: subtleFloat 15s ease-in-out infinite alternate;
+}
+
+/* Add subtle floating animation for depth */
+@keyframes subtleFloat {
+  0% {
+    background-position: center;
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+
+  100% {
+    background-position: center 10%;
+    transform: translateY(0px);
+  }
+}
+
+/* Cosmic dust/nebula effect */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.3;
+  filter: hue-rotate(240deg) brightness(0.8);
+  animation: noisePan 30s linear infinite;
 }
 
 /* Header styles */
@@ -57,6 +155,7 @@ body {
   border-radius: 4px;
   font-size: 14px;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 #cameraPresets button:hover {
@@ -81,7 +180,35 @@ body {
   border-left: 3px solid #4ecca3;
 }
 
-#score, #turn, #remaining {
+#score-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(78, 204, 163, 0.3);
+}
+
+#score-x, #score-o {
+  flex: 1;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 8px 0;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+#score-x {
+  background: rgba(255, 0, 0, 0.15);
+  color: #ff6b6b;
+}
+
+#score-o {
+  background: rgba(0, 0, 255, 0.15);
+  color: #6b9fff;
+}
+
+#turn, #remaining {
   font-size: 16px;
   padding: 5px 0;
 }
@@ -312,6 +439,15 @@ body {
     padding: 10px;
   }
 
+  #score-container {
+    gap: 5px;
+  }
+
+  #score-x, #score-o {
+    font-size: 16px;
+    padding: 6px 0;
+  }
+
   #gameInstructions {
     position: absolute;
     top: 110px;
@@ -358,7 +494,16 @@ body {
     z-index: 20;
   }
 
-  #score, #turn, #remaining {
+  #score-container {
+    gap: 3px;
+  }
+
+  #score-x, #score-o {
+    font-size: 14px;
+    padding: 5px 0;
+  }
+
+  #turn, #remaining {
     font-size: 14px;
     padding: 3px 0;
   }
@@ -480,4 +625,23 @@ body {
     max-height: 60vh;
     overflow-y: auto;
   }
+}
+
+/* Score change animation */
+@keyframes scoreChange {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.15);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.score-changed {
+  animation: scoreChange 0.5s ease;
 }
