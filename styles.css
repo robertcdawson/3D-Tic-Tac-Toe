@@ -12,6 +12,10 @@ body {
   color: #e6e6e6;
   animation: gradientShift 30s ease infinite;
   position: relative;
+  -webkit-backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 @keyframes gradientShift {
@@ -49,6 +53,10 @@ body::after {
   pointer-events: none;
   z-index: -2;
   animation: twinkling 20s ease-in-out infinite alternate;
+  -webkit-backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 @keyframes twinkling {
@@ -111,6 +119,62 @@ body::before {
   opacity: 0.3;
   filter: hue-rotate(240deg) brightness(0.8);
   animation: noisePan 30s linear infinite;
+  -webkit-backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Add missing noisePan animation */
+@keyframes noisePan {
+  0% {
+    background-position: 0% 0%;
+  }
+
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+/* Fix for iOS background rendering */
+@media only screen and (max-width: 844px) {
+  body {
+    background-attachment: scroll;
+  }
+
+  body::before, body::after {
+    -webkit-backface-visibility: hidden;
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+
+  /* Fallback for iOS devices */
+  @supports (-webkit-touch-callout: none) {
+    body {
+      /* Simpler gradient background for iOS */
+      background: linear-gradient(135deg, #0c0921, #292552);
+      background-attachment: scroll;
+    }
+
+    /* Simpler stars for iOS */
+    body::after {
+      background-image:
+        radial-gradient(1px 1px at 25% 15%, rgba(255, 255, 255, 0.9), transparent),
+        radial-gradient(1px 1px at 50% 50%, rgba(255, 255, 255, 0.7), transparent),
+        radial-gradient(2px 2px at 75% 25%, rgba(255, 255, 255, 0.8), transparent),
+        radial-gradient(1px 1px at 20% 60%, rgba(255, 255, 255, 0.7), transparent);
+      background-size: 100% 100%;
+      animation: none;
+      opacity: 0.8;
+    }
+
+    /* Simpler noise for iOS */
+    body::before {
+      opacity: 0.2;
+      animation: none;
+    }
+  }
 }
 
 /* Header styles */
