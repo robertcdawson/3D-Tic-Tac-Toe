@@ -317,7 +317,7 @@ body {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 380px) {
   #gameHeader {
     flex-direction: column;
     gap: 10px;
@@ -412,7 +412,7 @@ body {
 }
 
 /* Ensure no overlap on very small screens */
-@media (max-width: 360px) {
+@media (max-width: 320px) {
   #gameStats {
     top: 80px;
     right: 10px;
@@ -428,5 +428,45 @@ body {
 
   .collapsed #gameInstructions {
     max-width: 120px;
+  }
+}
+
+/* Specific styles for iPhone 16 Pro and similar devices */
+@media (min-width: 381px) and (max-width: 420px) {
+  #gameHeader {
+    flex-direction: row;
+    /* Ensure horizontal layout */
+    padding: 10px 15px;
+  }
+
+  #gameHeader h1 {
+    font-size: 20px;
+    /* Slightly smaller font to fit */
+  }
+
+  #cameraPresets {
+    gap: 5px;
+    /* Reduce gap between buttons */
+  }
+
+  #cameraPresets::before {
+    content: none;
+    /* Remove the "Views:" label */
+  }
+
+  #cameraPresets button {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  #gameStats {
+    top: 60px;
+    right: 10px;
+    max-width: 140px;
+  }
+
+  #gameContainer {
+    padding-top: 20px;
+    /* Reset padding since we're using desktop layout */
   }
 }

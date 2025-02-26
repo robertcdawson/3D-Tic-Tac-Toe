@@ -272,6 +272,9 @@ let scores = { 'X': 0, 'O': 0 };
 let gameActive = true;
 let totalMarks = 0;
 
+// Define a constant for mobile breakpoint to match CSS media queries
+const MOBILE_BREAKPOINT = 500;
+
 // Sound variables
 let soundEnabled = true;
 let placeMarkSound, completeLineSound, winGameSound;
@@ -312,7 +315,7 @@ function initGame() {
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
   // Set initial camera position based on device
-  if (window.innerWidth <= 480) {
+  if (window.innerWidth <= MOBILE_BREAKPOINT) {
     // For mobile, position camera significantly higher
     camera.position.set(5, 8, 5); // Increased from 6.5 to 8 for a more noticeable shift upward
   } else {
@@ -410,7 +413,7 @@ function initGame() {
   }
 
   // Auto-collapse instructions on small screens
-  if (window.innerWidth <= 480) {
+  if (window.innerWidth <= MOBILE_BREAKPOINT) {
     instructionsPanel.classList.add('collapsed');
   }
 
@@ -455,14 +458,15 @@ function createGameBoard() {
 }
 
 function resetZoom() {
-  const isMobile = window.innerWidth <= 480;
+  const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
+
+  // Reset to center
+  controls.target.set(0, 0, 0);
 
   if (isMobile) {
     camera.position.set(5, 8, 5);
-    controls.target.set(0, 3.5, 0); // Updated to 3.5 to match adjustCubePositionForMobile
   } else {
     camera.position.copy(initialCameraPosition);
-    controls.target.set(0, 0, 0);
   }
 
   controls.update();
@@ -924,7 +928,7 @@ function onWindowResize() {
 
   // Auto-collapse instructions on small screens when resizing
   const instructionsPanel = document.getElementById('gameInstructions');
-  if (window.innerWidth <= 480 && !instructionsPanel.classList.contains('collapsed')) {
+  if (window.innerWidth <= MOBILE_BREAKPOINT && !instructionsPanel.classList.contains('collapsed')) {
     instructionsPanel.classList.add('collapsed');
   }
 
@@ -935,16 +939,10 @@ function onWindowResize() {
 // Function to adjust cube position for mobile devices
 function adjustCubePositionForMobile() {
   // Get all objects in the scene
-  const isMobile = window.innerWidth <= 480;
+  const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
 
-  // Adjust the scene position based on device size
-  if (isMobile) {
-    // Move the scene up on mobile by adjusting the camera target
-    controls.target.set(0, 3.5, 0); // Increased from 2.5 to 3.5 units for more significant shift
-  } else {
-    // Reset to center on desktop
-    controls.target.set(0, 0, 0);
-  }
+  // Reset to center
+  controls.target.set(0, 0, 0);
 
   // Update camera to look at the new target
   camera.lookAt(controls.target);
@@ -975,7 +973,7 @@ function animate() {
 
 // Function to set camera to a preset position
 function setCameraPreset(preset) {
-  const isMobile = window.innerWidth <= 480;
+  const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
 
   switch (preset) {
     case 'front':
@@ -998,11 +996,8 @@ function setCameraPreset(preset) {
       break;
   }
 
-  if (isMobile) {
-    controls.target.set(0, 3.5, 0); // Updated to 3.5 to match adjustCubePositionForMobile
-  } else {
-    controls.target.set(0, 0, 0);
-  }
+  // Reset to center
+  controls.target.set(0, 0, 0);
 
   controls.update();
 }
