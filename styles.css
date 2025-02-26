@@ -20,7 +20,7 @@ body {
   background: rgba(16, 16, 36, 0.8);
   padding: 10px 20px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   z-index: 100;
@@ -29,7 +29,7 @@ body {
 #gameHeader h1 {
   font-family: 'Orbitron', sans-serif;
   font-size: 28px;
-  margin: 0;
+  margin: 0 0 10px 0;
   color: #4ecca3;
   text-shadow: 0 0 10px rgba(78, 204, 163, 0.5);
 }
@@ -39,6 +39,14 @@ body {
   display: flex;
   gap: 10px;
   align-items: center;
+  margin-top: 5px;
+}
+
+#cameraPresets::before {
+  content: "Views:";
+  color: #4ecca3;
+  font-weight: bold;
+  margin-right: 10px;
 }
 
 #cameraPresets button {
@@ -60,7 +68,7 @@ body {
 /* Game stats panel */
 #gameStats {
   position: absolute;
-  top: 80px;
+  top: 120px;
   right: 20px;
   background: rgba(16, 16, 36, 0.8);
   padding: 15px;
@@ -103,7 +111,7 @@ body {
 /* Instructions panel */
 #gameInstructions {
   position: absolute;
-  top: 80px;
+  top: 120px;
   left: 20px;
   background: rgba(16, 16, 36, 0.8);
   padding: 15px 20px;
@@ -295,17 +303,18 @@ body {
 @media (max-width: 768px) {
   #gameHeader h1 {
     font-size: 22px;
+    margin-bottom: 8px;
   }
 
   #gameStats {
-    top: 70px;
+    top: 110px;
     right: 10px;
     padding: 10px;
   }
 
   #gameInstructions {
     position: absolute;
-    top: 70px;
+    top: 110px;
     left: 10px;
     max-width: 200px;
     padding: 10px 15px;
@@ -323,35 +332,24 @@ body {
 
 @media (max-width: 380px) {
   #gameHeader {
-    flex-direction: column;
-    gap: 10px;
     padding: 10px;
   }
 
   #gameHeader h1 {
-    margin-bottom: 5px;
+    margin-bottom: 8px;
   }
 
   #cameraPresets {
     width: 100%;
     justify-content: center;
-    display: flex;
-    align-items: center;
-  }
-
-  #cameraPresets::before {
-    content: "Views:";
-    margin-right: 10px;
-    color: #4ecca3;
-    font-weight: bold;
   }
 
   #gameContainer {
-    padding-top: 120px;
+    padding-top: 1rem;
   }
 
   #gameStats {
-    top: 80px;
+    top: 140px;
     right: 10px;
     bottom: auto;
     max-width: 150px;
@@ -366,7 +364,7 @@ body {
   }
 
   #gameInstructions {
-    top: 100px;
+    top: 140px;
     left: 10px;
     max-width: 150px;
     padding: 8px 12px;
@@ -439,12 +437,13 @@ body {
 
 @media (min-width: 381px) and (max-width: 420px) {
   #gameHeader {
-    flex-direction: row;
+    flex-direction: column;
     padding: 10px 15px;
   }
 
   #gameHeader h1 {
     font-size: 20px;
+    margin-bottom: 8px;
   }
 
   #cameraPresets {
@@ -452,7 +451,10 @@ body {
   }
 
   #cameraPresets::before {
-    content: none;
+    content: "Views:";
+    margin-right: 8px;
+    color: #4ecca3;
+    font-weight: bold;
   }
 
   #cameraPresets button {
@@ -461,17 +463,17 @@ body {
   }
 
   #gameStats {
-    top: 100px;
+    top: 130px;
     right: 10px;
     max-width: 140px;
   }
 
   #gameContainer {
-    padding-top: 20px;
+    padding-top: 1rem;
   }
 
   #gameInstructions {
-    top: 100px;
+    top: 130px;
     left: 10px;
     max-width: 150px;
     min-height: 40px;
