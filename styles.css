@@ -112,6 +112,8 @@ body {
   max-width: 350px;
   z-index: 10;
   border-left: 3px solid #4ecca3;
+  display: flex;
+  flex-direction: column;
 }
 
 .instructions-header {
@@ -119,6 +121,7 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
+  min-height: 30px;
 }
 
 #gameInstructions h2 {
@@ -367,6 +370,9 @@ body {
     max-width: 200px;
     padding: 8px 12px;
     z-index: 20;
+    min-height: 40px;
+    max-height: 60vh;
+    overflow-y: auto;
   }
 
   #gameInstructions h2 {
@@ -382,12 +388,11 @@ body {
     font-size: 12px;
   }
 
-  /* Ensure instructions don't overlap with score on small screens */
   .collapsed #gameInstructions {
     max-width: 150px;
+    min-height: 40px;
   }
 
-  /* Make buttons larger and more touch-friendly on mobile */
   #cameraPresets button {
     min-height: 44px;
     min-width: 44px;
@@ -405,13 +410,11 @@ body {
     height: 44px;
   }
 
-  /* Increase the size of the toggle icon for better visibility */
   .toggle-icon {
     font-size: 20px;
   }
 }
 
-/* Ensure no overlap on very small screens */
 @media (max-width: 320px) {
   #gameStats {
     top: 80px;
@@ -424,34 +427,31 @@ body {
   #gameInstructions {
     max-width: 150px;
     padding: 6px 10px;
+    min-height: 40px;
   }
 
   .collapsed #gameInstructions {
     max-width: 120px;
+    min-height: 40px;
   }
 }
 
-/* Specific styles for iPhone 16 Pro and similar devices */
 @media (min-width: 381px) and (max-width: 420px) {
   #gameHeader {
     flex-direction: row;
-    /* Ensure horizontal layout */
     padding: 10px 15px;
   }
 
   #gameHeader h1 {
     font-size: 20px;
-    /* Slightly smaller font to fit */
   }
 
   #cameraPresets {
     gap: 5px;
-    /* Reduce gap between buttons */
   }
 
   #cameraPresets::before {
     content: none;
-    /* Remove the "Views:" label */
   }
 
   #cameraPresets button {
@@ -467,6 +467,14 @@ body {
 
   #gameContainer {
     padding-top: 20px;
-    /* Reset padding since we're using desktop layout */
+  }
+
+  #gameInstructions {
+    bottom: 10px;
+    left: 10px;
+    max-width: 200px;
+    min-height: 40px;
+    max-height: 60vh;
+    overflow-y: auto;
   }
 }
