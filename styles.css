@@ -460,7 +460,7 @@ body {
   }
 
   #gameStats {
-    top: 60px;
+    top: 100px;
     right: 10px;
     max-width: 140px;
   }
@@ -470,7 +470,7 @@ body {
   }
 
   #gameInstructions {
-    bottom: 10px;
+    bottom: 20px;
     left: 10px;
     max-width: 200px;
     min-height: 40px;
