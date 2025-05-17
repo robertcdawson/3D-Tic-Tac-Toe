@@ -306,7 +306,18 @@ const cameraPresets = {
 };
 
 // Initialize the game when the DOM is loaded
-document.addEventListener('DOMContentLoaded', initGame);
+document.addEventListener('DOMContentLoaded', () => {
+  setViewportHeight();
+  initGame();
+});
+
+// Dynamically set a CSS variable for the viewport height to handle mobile
+function setViewportHeight() {
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+window.addEventListener('resize', setViewportHeight);
 
 function initGame() {
   scene = new THREE.Scene();
@@ -1072,6 +1083,9 @@ function setCameraPreset(preset) {
 
   // Reset to center
   controls.target.set(0, 0, 0);
+
+  // Ensure the camera is looking at the center after repositioning
+  camera.lookAt(controls.target);
 
   controls.update();
 }
