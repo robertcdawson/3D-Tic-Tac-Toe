@@ -684,6 +684,10 @@ function markCube(cube, x, y, z, player) {
 
   // Store reference to the last placed mark for pulse animation
   lastPlacedMark = mark;
+
+  if (window.tutorial && window.tutorial.handleMarkPlaced) {
+    window.tutorial.handleMarkPlaced();
+  }
 }
 
 function checkLines() {
@@ -1042,6 +1046,9 @@ function animate() {
   }
 
   controls.update();
+  if (window.tutorial && window.tutorial.checkRotation) {
+    window.tutorial.checkRotation();
+  }
   renderer.render(scene, camera);
 }
 
@@ -1074,6 +1081,9 @@ function setCameraPreset(preset) {
   controls.target.set(0, 0, 0);
 
   controls.update();
+  if (window.tutorial && window.tutorial.handlePresetUsed) {
+    window.tutorial.handlePresetUsed();
+  }
 }
 
 // Function to handle cube hover effects
