@@ -299,6 +299,24 @@ body::before {
   cursor: pointer;
 }
 
+#aiControls {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+#aiControls label {
+  display: flex;
+  align-items: center;
+}
+
+#aiControls input,
+#aiControls select {
+  margin-right: 5px;
+  cursor: pointer;
+}
+
 /* Instructions panel */
 #gameInstructions {
   position: absolute;
