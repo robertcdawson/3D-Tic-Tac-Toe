@@ -744,6 +744,7 @@ body::before {
   color: #fff;
   text-align: center;
   padding: 20px;
+  pointer-events: none;
 }
 
 #tutorialBox {
@@ -752,6 +753,7 @@ body::before {
   border-radius: 8px;
   max-width: 400px;
   width: 100%;
+  pointer-events: auto;
 }
 
 #tutorialBtns {
