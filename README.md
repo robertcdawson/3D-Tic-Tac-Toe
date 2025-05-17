@@ -10,9 +10,7 @@
 
 - **Interactive 3D Game Board**: Fully rotatable and interactive 3D cube
 - **Two Player Mode**: Play against a friend locally
-- **AI Opponent**: Challenge our intelligent computer opponent with adjustable difficulty
-- **Game Statistics**: Track your wins, losses, and draws
-- **Tutorial Mode**: Learn the game with an interactive tutorial
+- **Score Display**: See how many lines each player has completed
 - **Responsive Design**: Play on desktop or mobile devices
 
 ## How to Play
@@ -67,4 +65,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - Inspired by the classic Tic-Tac-Toe game
-- Thanks to all contributors and testers 
+- Thanks to all contributors and testers

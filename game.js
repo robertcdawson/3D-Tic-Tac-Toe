@@ -280,6 +280,11 @@ let soundEnabled = true;
 let placeMarkSound, completeLineSound, winGameSound;
 let currentSound = null;
 
+// AI settings
+let aiEnabled = false;
+let aiDifficulty = 'easy';
+const aiPlayer = 'O';
+
 // Flag to track if a line was completed on the current move
 let lineCompletedThisTurn = false;
 
@@ -306,7 +311,18 @@ const cameraPresets = {
 };
 
 // Initialize the game when the DOM is loaded
-document.addEventListener('DOMContentLoaded', initGame);
+document.addEventListener('DOMContentLoaded', () => {
+  setViewportHeight();
+  initGame();
+});
+
+// Dynamically set a CSS variable for the viewport height to handle mobile
+function setViewportHeight() {
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+window.addEventListener('resize', setViewportHeight);
 
 function initGame() {
   scene = new THREE.Scene();
@@ -384,6 +400,18 @@ function initGame() {
   soundToggle.addEventListener('change', function () {
     soundEnabled = this.checked;
   });
+
+  // AI toggle and difficulty
+  const aiToggle = document.getElementById('aiEnabled');
+  const aiSelect = document.getElementById('aiDifficulty');
+  if (aiToggle && aiSelect) {
+    aiToggle.addEventListener('change', function () {
+      aiEnabled = this.checked;
+    });
+    aiSelect.addEventListener('change', function () {
+      aiDifficulty = this.value;
+    });
+  }
 
   // Set up camera preset buttons
   document.getElementById('frontView').addEventListener('click', () => setCameraPreset('front'));
@@ -631,7 +659,45 @@ function onCubeClick(event) {
       // If the game continues, switch players
       currentPlayer = (currentPlayer === 'X') ? 'O' : 'X';
       document.getElementById('turn').innerText = `Current turn: ${currentPlayer}`;
+
+      if (aiEnabled && currentPlayer === aiPlayer) {
+        setTimeout(makeAIMove, 300);
+      }
     }
+  }
+}
+
+function makeAIMove() {
+  if (!aiEnabled || currentPlayer !== aiPlayer || !gameActive) return;
+
+  const move = getAIMove(board, aiDifficulty, aiPlayer);
+  if (!move) return;
+
+  const cube = cubes.find(c =>
+    c.userData.x === move.x &&
+    c.userData.y === move.y &&
+    c.userData.z === move.z);
+
+  if (cube && !cube.userData.marked) {
+    lineCompletedThisTurn = false;
+    markCube(cube, move.x, move.y, move.z, aiPlayer);
+    totalMarks++;
+    document.getElementById('remaining').innerText = `Cells remaining: ${27 - totalMarks}`;
+    checkLines();
+    logGameState();
+    if (totalMarks === 27) {
+      endGame();
+      return;
+    }
+    if (soundEnabled) {
+      if (lineCompletedThisTurn) {
+        playSound(completeLineSound, "completeLineSound");
+      } else {
+        playSound(placeMarkSound, "placeMarkSound");
+      }
+    }
+    currentPlayer = (currentPlayer === 'X') ? 'O' : 'X';
+    document.getElementById('turn').innerText = `Current turn: ${currentPlayer}`;
   }
 }
 
@@ -931,38 +997,38 @@ function resetGame() {
   highlightedLines = [];
 
   // Properly remove all X and O marks from the scene
-  // First, create a new array to store objects we want to keep
-  const keepChildren = [];
+  const marksToRemove = [];
 
-  // Iterate through all scene children
+  // Identify mark objects to remove
   for (let i = 0; i < scene.children.length; i++) {
     const child = scene.children[i];
 
     // Check if this is an X mark (Group with CylinderGeometry children)
-    if (child.type === 'Group' && child.children &&
+    if (
+      child.type === 'Group' &&
+      child.children &&
       child.children.length > 0 &&
       child.children[0].geometry &&
-      child.children[0].geometry.type === 'CylinderGeometry') {
-      // This is an X mark, don't add it to keepChildren
+      child.children[0].geometry.type === 'CylinderGeometry'
+    ) {
       console.log("Removing X mark from scene");
+      marksToRemove.push(child);
       continue;
     }
 
     // Check if this is an O mark (Mesh with TorusGeometry)
-    if (child.isMesh &&
+    if (
+      child.isMesh &&
       child.geometry &&
-      child.geometry.type === 'TorusGeometry') {
-      // This is an O mark, don't add it to keepChildren
+      child.geometry.type === 'TorusGeometry'
+    ) {
       console.log("Removing O mark from scene");
-      continue;
+      marksToRemove.push(child);
     }
-
-    // If it's not an X or O mark, keep it
-    keepChildren.push(child);
   }
 
-  // Replace scene children with only the objects we want to keep
-  scene.children = keepChildren;
+  // Explicitly remove each mark object from the scene
+  marksToRemove.forEach(child => scene.remove(child));
 
   // Also reset zoom to the default view.
   resetZoom();
@@ -1079,6 +1145,9 @@ function setCameraPreset(preset) {
 
   // Reset to center
   controls.target.set(0, 0, 0);
+
+  // Ensure the camera is looking at the center after repositioning
+  camera.lookAt(controls.target);
 
   controls.update();
   if (window.tutorial && window.tutorial.handlePresetUsed) {
@@ -1218,6 +1287,10 @@ function onCubeTouchEnd(event) {
       // Switch players
       currentPlayer = (currentPlayer === 'X') ? 'O' : 'X';
       document.getElementById('turn').innerText = `Current turn: ${currentPlayer}`;
+
+      if (aiEnabled && currentPlayer === aiPlayer) {
+        setTimeout(makeAIMove, 300);
+      }
     }
   }
 }
