@@ -938,38 +938,38 @@ function resetGame() {
   highlightedLines = [];
 
   // Properly remove all X and O marks from the scene
-  // First, create a new array to store objects we want to keep
-  const keepChildren = [];
+  const marksToRemove = [];
 
-  // Iterate through all scene children
+  // Identify mark objects to remove
   for (let i = 0; i < scene.children.length; i++) {
     const child = scene.children[i];
 
     // Check if this is an X mark (Group with CylinderGeometry children)
-    if (child.type === 'Group' && child.children &&
+    if (
+      child.type === 'Group' &&
+      child.children &&
       child.children.length > 0 &&
       child.children[0].geometry &&
-      child.children[0].geometry.type === 'CylinderGeometry') {
-      // This is an X mark, don't add it to keepChildren
+      child.children[0].geometry.type === 'CylinderGeometry'
+    ) {
       console.log("Removing X mark from scene");
+      marksToRemove.push(child);
       continue;
     }
 
     // Check if this is an O mark (Mesh with TorusGeometry)
-    if (child.isMesh &&
+    if (
+      child.isMesh &&
       child.geometry &&
-      child.geometry.type === 'TorusGeometry') {
-      // This is an O mark, don't add it to keepChildren
+      child.geometry.type === 'TorusGeometry'
+    ) {
       console.log("Removing O mark from scene");
-      continue;
+      marksToRemove.push(child);
     }
-
-    // If it's not an X or O mark, keep it
-    keepChildren.push(child);
   }
 
-  // Replace scene children with only the objects we want to keep
-  scene.children = keepChildren;
+  // Explicitly remove each mark object from the scene
+  marksToRemove.forEach(child => scene.remove(child));
 
   // Also reset zoom to the default view.
   resetZoom();
