@@ -27,6 +27,10 @@
         <button id="sideView">Side</button>
         <button id="cornerView">Corner</button>
       </div>
+      <div id="tutorialControls">
+        <button id="startTutorial">Start Tutorial</button>
+        <button id="dismissTutorial" class="hidden">Dismiss Tutorial</button>
+      </div>
     </header>
 
   <div id="gameStats">
@@ -92,9 +96,19 @@
       </div>
     </div>
 
-    <div id="gameOver" class="hidden">
+  <div id="gameOver" class="hidden">
       <div id="winner"></div>
       <button id="resetButton">Play Again</button>
+    </div>
+  </div>
+
+  <div id="tutorialOverlay" class="hidden">
+    <div id="tutorialBox">
+      <div id="tutorialText"></div>
+      <div id="tutorialBtns">
+        <button id="tutorialNext">Next</button>
+        <button id="tutorialSkip">Skip</button>
+      </div>
     </div>
   </div>
 
@@ -111,6 +125,8 @@
 
   <!-- Link to external JavaScript file -->
   <script src="ai.js"></script>
+  <!-- Tutorial and main scripts -->
+  <script src="tutorial.js"></script>
   <script src="game.js"></script>
 </body>
 
