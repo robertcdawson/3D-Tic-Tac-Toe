@@ -744,7 +744,7 @@ body::before {
   color: #fff;
   text-align: center;
   padding: 20px;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 #tutorialBox {
@@ -754,6 +754,7 @@ body::before {
   max-width: 400px;
   width: 100%;
   pointer-events: auto;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
 }
 
 #tutorialBtns {
@@ -761,18 +762,39 @@ body::before {
   display: flex;
   justify-content: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 #tutorialBtns button {
   background: #4ecca3;
   border: none;
   color: #1a1a2e;
-  padding: 8px 16px;
+  padding: 10px 20px;
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
+  font-size: 1rem;
+  transition: background 0.2s, color 0.2s, transform 0.1s;
 }
 
-#tutorialControls button {
-  margin-left: 5px;
+#tutorialBtns button:hover, #tutorialBtns button:focus {
+  background: #3bbf9b;
+  color: #fff;
+  outline: none;
+  transform: translateY(-2px) scale(1.05);
+}
+
+@media (max-width: 600px) {
+  #tutorialBox {
+    max-width: 95vw;
+    padding: 10px;
+  }
+  #tutorialBtns button {
+    padding: 10px 10px;
+    font-size: 0.95rem;
+  }
+}
+
+#tutorialOverlay.hidden {
+  display: none !important;
 }

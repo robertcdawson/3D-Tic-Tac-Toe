@@ -1,8 +1,14 @@
+console.log('tutorial.js loaded');
+
 (function () {
   const steps = [
     { text: 'Welcome to 3D Tic-Tac-Toe! Click Next to start.', event: 'next' },
-    { text: 'Rotate the board by dragging or using arrow keys.', event: 'rotated' },
-    { text: 'Place a mark on any cube.', event: 'markPlaced' },
+    { text: '🔄 Drag to rotate the cube', event: 'next' },
+    { text: '🔍 Scroll to zoom in/out', event: 'next' },
+    { text: '👆 Click on a cube to place your mark', event: 'next' },
+    { text: '⌨️ Arrow keys to rotate', event: 'next' },
+    { text: '⇧ Shift+Up/Down to zoom', event: 'next' },
+    { text: 'ℹ️ You can click edges of interior cells from certain angles', event: 'next' },
     { text: 'Use the view buttons to change perspective.', event: 'presetUsed' },
     { text: 'Tutorial complete! Enjoy the game.', event: 'next' }
   ];
@@ -20,10 +26,22 @@
     startBtn = document.getElementById('startTutorial');
     dismissBtn = document.getElementById('dismissTutorial');
 
-    if (startBtn) startBtn.addEventListener('click', start);
-    if (dismissBtn) dismissBtn.addEventListener('click', end);
-    if (nextBtn) nextBtn.addEventListener('click', next);
-    if (skipBtn) skipBtn.addEventListener('click', end);
+    if (startBtn) startBtn.addEventListener('click', function() {
+      console.log('[Tutorial] Start button clicked');
+      start();
+    });
+    if (dismissBtn) dismissBtn.addEventListener('click', function() {
+      console.log('[Tutorial] Dismiss button clicked');
+      end();
+    });
+    if (nextBtn) nextBtn.addEventListener('click', function() {
+      console.log('[Tutorial] Next button clicked');
+      next();
+    });
+    if (skipBtn) skipBtn.addEventListener('click', function() {
+      console.log('[Tutorial] Skip button clicked');
+      end();
+    });
   }
 
   function start() {
@@ -32,22 +50,33 @@
     rotationBaseline = camera ? camera.position.clone() : null;
     startBtn.classList.add('hidden');
     dismissBtn.classList.remove('hidden');
+    console.log('[Tutorial] Tutorial started');
     show();
   }
 
   function end() {
+    if (skipBtn) skipBtn.blur();
+    if (nextBtn) nextBtn.blur();
     active = false;
     overlay.classList.add('hidden');
     dismissBtn.classList.add('hidden');
     startBtn.classList.remove('hidden');
+    console.log('[Tutorial] Tutorial ended. Overlay hidden.');
+    console.log('[Tutorial] State:', { active, current });
   }
 
   function show() {
     const step = steps[current];
-    if (!step) { end(); return; }
+    if (!step) { 
+      console.log('[Tutorial] No step found, ending tutorial.');
+      end(); 
+      return; 
+    }
     textBox.innerText = step.text;
     overlay.classList.remove('hidden');
     nextBtn.style.display = step.event === 'next' ? 'inline-block' : 'none';
+    skipBtn.style.display = 'inline-block';
+    console.log('[Tutorial] Showing step', current, step.text);
   }
 
   function next() {
