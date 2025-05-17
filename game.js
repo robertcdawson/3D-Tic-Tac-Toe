@@ -430,26 +430,31 @@ function initGame() {
 
   // Hook up the two reset buttons
   document.getElementById('resetButton').addEventListener('click', resetGame);
-  document.getElementById('resetZoomButton').addEventListener('click', resetZoom);
+  const resetZoomBtn = document.getElementById('resetZoomButton');
+  if (resetZoomBtn) {
+    resetZoomBtn.addEventListener('click', resetZoom);
+  }
 
-  // Add event listener for instructions toggle
+  // Add event listener for instructions toggle (if instructions exist)
   const toggleButton = document.getElementById('toggleInstructions');
   const instructionsPanel = document.getElementById('gameInstructions');
 
-  toggleButton.addEventListener('click', () => {
-    instructionsPanel.classList.toggle('collapsed');
-    // Save preference to localStorage
-    localStorage.setItem('instructionsCollapsed', instructionsPanel.classList.contains('collapsed'));
-  });
+  if (toggleButton && instructionsPanel) {
+    toggleButton.addEventListener('click', () => {
+      instructionsPanel.classList.toggle('collapsed');
+      // Save preference to localStorage
+      localStorage.setItem('instructionsCollapsed', instructionsPanel.classList.contains('collapsed'));
+    });
 
-  // Check if instructions were previously collapsed
-  if (localStorage.getItem('instructionsCollapsed') === 'true') {
-    instructionsPanel.classList.add('collapsed');
-  }
+    // Check if instructions were previously collapsed
+    if (localStorage.getItem('instructionsCollapsed') === 'true') {
+      instructionsPanel.classList.add('collapsed');
+    }
 
-  // Auto-collapse instructions on small screens
-  if (window.innerWidth <= MOBILE_BREAKPOINT) {
-    instructionsPanel.classList.add('collapsed');
+    // Auto-collapse instructions on small screens
+    if (window.innerWidth <= MOBILE_BREAKPOINT) {
+      instructionsPanel.classList.add('collapsed');
+    }
   }
 
   animate();
@@ -1044,7 +1049,7 @@ function onWindowResize() {
 
   // Auto-collapse instructions on small screens when resizing
   const instructionsPanel = document.getElementById('gameInstructions');
-  if (window.innerWidth <= MOBILE_BREAKPOINT && !instructionsPanel.classList.contains('collapsed')) {
+  if (instructionsPanel && window.innerWidth <= MOBILE_BREAKPOINT && !instructionsPanel.classList.contains('collapsed')) {
     instructionsPanel.classList.add('collapsed');
   }
 
