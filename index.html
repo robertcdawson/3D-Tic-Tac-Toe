@@ -33,7 +33,7 @@
       </div>
     </header>
 
-    <div id="gameStats">
+  <div id="gameStats">
       <div id="score-container">
         <div id="score-x">X: 0</div>
         <div id="score-o">O: 0</div>
@@ -45,6 +45,16 @@
           <input type="checkbox" id="soundEnabled" checked>
           Sound
         </label>
+      </div>
+      <div id="aiControls">
+        <label>
+          <input type="checkbox" id="aiEnabled">
+          Play vs AI
+        </label>
+        <select id="aiDifficulty">
+          <option value="easy">Easy</option>
+          <option value="hard">Hard</option>
+        </select>
       </div>
     </div>
 
@@ -113,6 +123,8 @@
     <source src="https://assets.mixkit.co/active_storage/sfx/2020/2020-preview.mp3" type="audio/mpeg">
   </audio>
 
+  <!-- Link to external JavaScript file -->
+  <script src="ai.js"></script>
   <!-- Tutorial and main scripts -->
   <script src="tutorial.js"></script>
   <script src="game.js"></script>
